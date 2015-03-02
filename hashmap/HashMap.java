@@ -1,5 +1,8 @@
 package hashmap;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import binarytree.BinaryTree;
 import binarytree.Node;
@@ -23,12 +26,15 @@ public class HashMap<T extends Comparable<T>> {
     }
 
     private int hash(T key) {
-        return key.hashCode() % size;
+        int hashCode = key.hashCode() % size;
+        return hashCode > 0 ? hashCode : -hashCode;
     }
 
     public void insertKey(T key) {
-        int hash = hash(key);
+        if (null == key)
+            return;
 
+        int hash = hash(key);
         if (null == map[hash])
             map[hash] = new BinaryTree<T>();
         map[hash].insertNode(key);
@@ -43,26 +49,113 @@ public class HashMap<T extends Comparable<T>> {
         return map[hash].search(key);
     }
 
-    public static void main(String[] args) {
-        HashMap<Integer> test = new HashMap<Integer>();
-
-        for (int j = 0; j < test.size; j++)
-            for (int i = j; i < 2019; i += 1009)
-                test.insertKey(i);
-        for (BinaryTree<Integer> cell : test.map)
+    private void displayTree() {
+        for (BinaryTree<T> cell : map)
             if (null != cell)
-                ;
-        // cell.printInOrder();
+                cell.printInOrder();
+    }
 
-        for (int i = 1500; i < 4500; i += 11) {
-            for (int j = 0; j < 2; j++) {
-                Node<Integer> found = test.findKey(i);
-                if (null != found)
-                    System.out.println(found.getKey().toString());
-                else
-                    System.out.println("Unable to Find: " + i);
-                test.insertKey(i);
+    public static char getChoice() {
+        String s = getInput();
+        return s != null ? s.charAt(0) : 0;
+    }
+
+    public static String getInput() {
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(isr);
+        String s = null;
+        try {
+            s = br.readLine();
+        } catch (IOException e) {
+            System.out.println("Unable to read input. Please retry.");
+        }
+        return s;
+    }
+
+    public static void main(String[] args) {
+        int value;
+        String inputString = null;
+        char dataType = 0;
+        HashMap localMap = null;
+
+        while (true) {
+            System.out.println("Enter letter of Key[T]ype [I]nputValue [S]earch [D]isplay");
+            char choice = Character.toLowerCase(getChoice());
+            switch (choice) {
+            case 't':
+                System.out.println("Enter Map Type. Supported Types are [I]nteger, [S]tring, [D]ouble");
+                switch (dataType = Character.toLowerCase(getChoice())) {
+                case 'd':
+                    localMap = new HashMap<Double>();
+                    break;
+                case 'i':
+                    localMap = new HashMap<Integer>();
+                    break;
+                case 's':
+                    localMap = new HashMap<String>();
+                    break;
+                default:
+                    System.out.print("Invalid entry\n");
+                }
+
+                break;
+            case 'i':
+                System.out.println("Please enter a value to insert of type " + dataType + ":");
+                inputString = getInput();
+                switch (dataType) {
+                case 'd':
+                    Double d = Double.parseDouble(inputString);
+                    localMap.insertKey(d);
+                    break;
+                case 'i':
+                    Integer i = Integer.parseInt(inputString);
+                    localMap.insertKey(i);
+                    break;
+                case 's':
+                    localMap.insertKey(inputString);
+                    break;
+                default:
+                    System.out.println("Please create a hashmap by specifying a keytype first");
+                    break;
+                }
+                break;
+            case 's':
+                System.out.println("Please enter a value to search for of type " + dataType + ":");
+                inputString = getInput();
+                switch (dataType) {
+                case 'd':
+                    Double d = Double.parseDouble(inputString);
+                    if (null != localMap.findKey(d))
+                        System.out.println("Found:" + inputString);
+                    else
+                        System.out.println(inputString + ": not Found");
+                    break;
+                case 'i':
+                    Integer i = Integer.parseInt(inputString);
+                    if (null != localMap.findKey(i))
+                        System.out.println("Found:" + inputString);
+                    else
+                        System.out.println(inputString + ": not Found");
+                    break;
+                case 's':
+                    if (null != localMap.findKey(inputString))
+                        System.out.println("Found:" + inputString);
+                    else
+                        System.out.println(inputString + ": not Found");
+                    break;
+                default:
+                    System.out.println("Please create a hashmap by specifying a keytype first");
+                    break;
+                }
+                break;
+            case 'd':
+                System.out.println("HashMap:");
+                localMap.displayTree();
+                break;
+            default:
+                System.out.println("Invalid entry");
             }
         }
     }
+
 }
