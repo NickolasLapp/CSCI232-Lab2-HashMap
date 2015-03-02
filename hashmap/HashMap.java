@@ -9,7 +9,7 @@ import binarytree.Node;
 
 public class HashMap<T extends Comparable<T>> {
     private BinaryTree<T>[] map;
-    private final int DEFAULT_SIZE = 1009;
+    private final static int DEFAULT_SIZE = 1009;
 
     private int size;
 
@@ -73,26 +73,34 @@ public class HashMap<T extends Comparable<T>> {
     }
 
     public static void main(String[] args) {
-        int value;
         String inputString = null;
+        int size = HashMap.DEFAULT_SIZE;
         char dataType = 0;
         HashMap localMap = null;
 
         while (true) {
-            System.out.println("Enter letter of Key[T]ype [I]nputValue [S]earch [D]isplay");
+            System.out.println("Enter letter of Key[T]ype [I]nputValue [S]earch [D]isplay Si[Z]e");
             char choice = Character.toLowerCase(getChoice());
             switch (choice) {
+            case 'z':
+                System.out.println("Please enter starting size for the hashmap");
+                size = Integer.parseInt(getInput());
+                if (size <= 0) {
+                    size = HashMap.DEFAULT_SIZE;
+                    System.out.println("Please enter a size greater than zero.");
+                }
+                break;
             case 't':
                 System.out.println("Enter Map Type. Supported Types are [I]nteger, [S]tring, [D]ouble");
                 switch (dataType = Character.toLowerCase(getChoice())) {
                 case 'd':
-                    localMap = new HashMap<Double>();
+                    localMap = new HashMap<Double>(size);
                     break;
                 case 'i':
-                    localMap = new HashMap<Integer>();
+                    localMap = new HashMap<Integer>(size);
                     break;
                 case 's':
-                    localMap = new HashMap<String>();
+                    localMap = new HashMap<String>(size);
                     break;
                 default:
                     System.out.print("Invalid entry\n");
